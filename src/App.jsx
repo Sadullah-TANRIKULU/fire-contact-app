@@ -9,6 +9,7 @@ function App() {
   const [phone, setPhone] = useState(0);
   const [select, setSelect] = useState("");
   const [contacts, setContacts] = useState([]);
+  const [isEdit, setIsEdit] = useState(false);
 
   // read
   useEffect(() => {
@@ -36,7 +37,6 @@ function App() {
   const writeToDatabase = (e) => {
     e.preventDefault();
     
-    
     const uuid = uid();
     set(ref(db, `/${uuid}`), {
       name,
@@ -50,7 +50,12 @@ function App() {
   };
 
   const handleSubmitChange = (item) => {
+    item.preventDefault();
     update(ref(db, `/${item.uuid}`));
+
+    setName("");
+    setPhone(0);
+    setIsEdit(false);
   };
 
   // console.log(contacts);
@@ -60,7 +65,7 @@ function App() {
     setName(item.name);
     setPhone(item.phone);
     setSelect(item.select);
-
+    setIsEdit(true)
   };
 
   
@@ -73,7 +78,8 @@ function App() {
 
   return (
     <div className="grid gap-4 mt-10 lg:grid-cols-2 lg:gap-12 text-2xl font-bold text-center h-3/5">
-      <form
+      { console.log(isEdit) }
+      { isEdit ? (<form
         className="addContact border-2 border-indigo-500 flex flex-col items-center justify-center gap-8"
         // onSubmit={handleAddContactSubmit}
         onSubmit={handleSubmitChange}
@@ -110,7 +116,46 @@ function App() {
         >
           Add
         </button>
-      </form>
+      </form>) 
+      : (<form
+        className="addContact border-2 border-indigo-500 flex flex-col items-center justify-center gap-8"
+        // onSubmit={handleAddContactSubmit}
+        onSubmit={writeToDatabase}
+      >
+        <input
+          value={name}
+          className="bg-orange-600/50 border-black border-2 rounded-sm"
+          type="text"
+          onChange={(e) => setName(e.target.value)}
+        />
+        <input
+          value={phone}
+          className="bg-black/50 border-orange-600 border-2 text-white rounded-sm "
+          type="number"
+          onChange={(e) => setPhone(e.target.value)}
+        />
+        <select
+          className="bg-orange-600/50 cursor-pointer w-80 border-black border-2 rounded-sm"
+          onClick={(e) => setSelect(e.target.value)}
+          value={select}
+          readOnly
+        >
+          <option >select an option</option>
+          <option value="male">male</option>
+          <option value="female">female</option>
+          <option value="LGBTQ+">LGBTQ+</option>
+          <option value="no comment">no comment</option>
+        </select>
+        <button
+          type="submit"
+          className="bg-green-700 px-4 w-40 rounded-sm"
+
+          // onClick={handleSubmitChange}
+        >
+          Add
+        </button>
+      </form>) }
+      
       <div className="contacts">
         <table className="table-fixed text-sm">
           <thead>
