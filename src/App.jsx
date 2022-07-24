@@ -7,79 +7,68 @@ import { useState, useEffect } from "react";
 function App() {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState(0);
-  const [select, setSelect] = useState();
-  const [singleContact, setSingleContact] = useState({
-    name: "",
-    phone: 0,
-    select: "",
-  });
+  const [select, setSelect] = useState("");
   const [contacts, setContacts] = useState([]);
-  const [isEdit, setIsEdit] = useState(false);
-  const [tempUuid, setTempUuid] = useState("");
-
-  // const handleAddContactSubmit = (e) => {
-  // console.log(singleContact);
-  // console.log(name);
-  // console.log(phone);
-  // console.log(select);
-  // e.preventDefault();
-  // };
 
   // read
   useEffect(() => {
-    onValue(ref(db), (snapshot) => {
-      setContacts([]);
-      const data = snapshot.val();
-      if (data !== null) {
-        Object.values(data).map((singleContact) => {
-          return setContacts((initialEmptyArray) => [
-            ...initialEmptyArray,
-            singleContact,
-          ]);
-        });
-      }
-    });
+    try {
+      onValue(ref(db), (snapshot) => {
+        setContacts([]);
+        const data = snapshot.val();
+        if (data !== null) {
+          Object.values(data).map((singleContact) => {
+            return setContacts((initialEmptyArray) => [
+              ...initialEmptyArray,
+              singleContact,
+            ]);
+          });
+        }
+      });
+    } catch (error) {
+      console.log(error.message);
+    }
   }, []);
 
   //write
+  
+  
   const writeToDatabase = (e) => {
-    console.log(singleContact);
     e.preventDefault();
-    setSingleContact({ ...singleContact, name, phone, select });
+    
+    
     const uuid = uid();
     set(ref(db, `/${uuid}`), {
-      singleContact,
+      name,
+      phone,
+      select,
       uuid,
     });
-
+    
     setName("");
     setPhone(0);
+  };
+
+  const handleSubmitChange = (item) => {
+    update(ref(db, `/${item.uuid}`));
   };
 
   // console.log(contacts);
 
   //update
-  // const handleUpdate = (name, phone, select) => {
-  //   setIsEdit(true);
-  //   setTempUuid(singleContact.uuid);
-  //   setName(name.name);
-  //   setPhone(phone.phone);
-  //   setSelect(select.select);
-  // };
+  const handleUpdate = (item) => {
+    setName(item.name);
+    setPhone(item.phone);
+    setSelect(item.select);
 
-  // const handleSubmitChange = () => {
-  //   update(ref(db, `/${tempUuid}`), {
-  //     singleContact,
-  //     uuid: tempUuid,
-  //   });
+  };
 
-  //   setName("");
-  //   setIsEdit(false);
-  // };
+  
 
   // delete
-  const handleDelete = (singleContact) => {
-    remove(ref(db, `/${singleContact.uuid}`));
+  const handleDelete = (item) => {
+    // console.log(item.uuid);
+    remove(ref(db, `/${item.uuid}`));
   };
 
   return (
@@ -87,7 +76,7 @@ function App() {
       <form
         className="addContact border-2 border-indigo-500 flex flex-col items-center justify-center gap-8"
         // onSubmit={handleAddContactSubmit}
-        onSubmit={writeToDatabase}
+        onSubmit={handleSubmitChange}
       >
         <input
           value={name}
@@ -104,8 +93,10 @@ function App() {
         <select
           className="bg-orange-600/50 cursor-pointer w-80 border-black border-2 rounded-sm"
           onClick={(e) => setSelect(e.target.value)}
+          value={select}
+          readOnly
         >
-          <option defaultChecked>select an option</option>
+          <option >select an option</option>
           <option value="male">male</option>
           <option value="female">female</option>
           <option value="LGBTQ+">LGBTQ+</option>
@@ -114,7 +105,7 @@ function App() {
         <button
           type="submit"
           className="bg-green-700 px-4 w-40 rounded-sm"
-          
+
           // onClick={handleSubmitChange}
         >
           Add
@@ -132,17 +123,17 @@ function App() {
             </tr>
           </thead>
           <tbody>
-            {contacts?.map((item, index) => {
-              console.log(item);
+            {contacts?.map((item) => {
+              // console.log(item);
               return (
-                <tr className="tableRows" key={index}>
-                  <td>{item.singleContact.name}</td>
-                  <td>{item.singleContact.phone}</td>
-                  <td>{item.singleContact.select}</td>
+                <tr className="tableRows" key={item.uuid}>
+                  <td>{item.name}</td>
+                  <td>{item.phone}</td>
+                  <td>{item.select}</td>
                   <td>
                     <button
                       className="bg-amber-500 text-xs px-4 w-20 rounded-sm"
-                      onClick={() => handleDelete(singleContact)}
+                      onClick={() => handleDelete(item)}
                     >
                       delete
                     </button>
@@ -150,7 +141,7 @@ function App() {
                   <td>
                     <button
                       className="bg-green-500 text-xs px-4 w-20 rounded-sm"
-                      // onClick={() => handleUpdate(singleContact)}
+                      onClick={() => handleUpdate(item)}
                     >
                       update
                     </button>
