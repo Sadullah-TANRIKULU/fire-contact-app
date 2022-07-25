@@ -90,7 +90,9 @@ function App() {
   };
 
   return (
-    <div className="grid gap-4 mt-10 lg:grid-cols-2 lg:gap-12 text-2xl font-bold text-center h-3/5">
+    <div 
+    className="flex flex-col lg:flex-row justify-center items-center gap-8 pt-10 text-2xl font-bold text-center bg-[url('https://picsum.photos/1600/900')] bg-cover h-screen ">
+      <h2 className="text-6xl font-quotes underline decoration-green-500 p-4 bg-stone-200/30 rounded-br-lg rounded-tl-lg absolute top-1 left-10 " >Vefa vicdanın telefon defteridir!</h2>
       <Form
         contacts={contacts}
         writeToDatabase={writeToDatabase}
