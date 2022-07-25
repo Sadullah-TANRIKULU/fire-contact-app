@@ -91,8 +91,12 @@ function App() {
 
   return (
     <div 
-    className="flex flex-col lg:flex-row justify-center items-center gap-8 pt-10 text-2xl font-bold text-center bg-[url('https://picsum.photos/1600/900')] bg-cover h-screen ">
-      <h2 className="text-2xl lg:text-6xl font-quotes underline decoration-green-500 p-2 lg:bg-stone-200/30 rounded-br-lg rounded-tl-lg absolute top-1 left-10 " >Vefa vicdanın telefon defteridir!</h2>
+    className="flex flex-col lg:flex-row justify-center items-center gap-4 lg:gap-10 pt-10 text-2xl font-bold text-center bg-[url('https://picsum.photos/1600/900')] bg-cover h-screen ">
+      <h2 
+      className="text-2xl lg:text-6xl font-quotes underline decoration-green-500 p-2 lg:bg-stone-200/30 rounded-br-lg rounded-tl-lg text-center mt-6 lg:absolute lg:top-2 lg:left-8" 
+      >
+        Vefa vicdanın telefon defteridir!
+      </h2>
       <Form
         contacts={contacts}
         writeToDatabase={writeToDatabase}
