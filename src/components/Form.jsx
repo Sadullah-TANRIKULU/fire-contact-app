@@ -1,5 +1,3 @@
-import { notify } from "../utils/customToastify"; 
-
 const Form = ({ name, phone, select , setName, setPhone, setSelect, handleSubmitChange, isEdit, writeToDatabase}) => {
     return ( 
         <div className="addContactForm">
